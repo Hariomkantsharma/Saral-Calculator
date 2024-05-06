@@ -157,7 +157,51 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(this,"minus evaluation start",Toast.LENGTH_SHORT).show();
                 }
                 else if(s.charAt(i)== 'x'){
+                    int spaceCount=0;
+                    ArrayList<String> Operands= new ArrayList<>();
+                    StringBuilder kk= new StringBuilder();
 
+                    int j=i-1;
+                    int out=0;
+                    while(out==0 && spaceCount<=2){
+
+                        if(s.charAt(j)==' '){
+                            spaceCount++;
+                            j--;
+                        }
+                        else if(isDigit(s.charAt(j))) {
+
+                            while (isDigit(s.charAt(j))) {
+                                kk.append(s.charAt(j));
+                                if(j==0){
+                                    out=1;
+                                    break;
+                                }
+                                j--;
+                            }
+                            kk.reverse();
+                            Operands.add(kk.toString());
+                            kk.setLength(0);
+                        }
+                    }
+                    //yha tak shi hai
+                    j+=2;
+                    int operand1= Integer.parseInt(Operands.get(1));
+                    int operand2 = Integer.parseInt(Operands.get(0));
+                    Toast.makeText(this,Operands.get(1)+ " "+ Operands.get(0),Toast.LENGTH_SHORT).show();
+
+                    int ans= operand1 * operand2;
+                    String replacement= String.valueOf(ans);
+                    int addedLength= replacement.length();
+
+                    if(out!=1){
+                        s= s.substring(0,j-1)+ replacement + s.substring(i+1,s.length()-1);
+                    }
+                    else{
+                        s= replacement + s.substring(i+1,s.length()-1);
+                    }
+
+                    i= j+addedLength-1;
                 }
                 else if(s.charAt(i)== '/'){
 
