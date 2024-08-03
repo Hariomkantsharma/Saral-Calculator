@@ -450,6 +450,11 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
 
+        //square op at begin
+        if(s.charAt(0)=='²'){
+            outputField.setText("invalid square");
+            return false;
+        }
         for (int i = 0; i < len - 1; i++) {
 
             if (isUnaryOP(s.charAt(i))) {
@@ -457,6 +462,12 @@ public class MainActivity extends AppCompatActivity {
                 if (isUnaryOP(s.charAt(i + 1))) {
                     outputField.setText("consecutive operators");
                     return false;
+                }
+                if(s.charAt(i)=='²'){
+                    if(!(s.charAt(i+1)=='²'|| isBinaryOP(s.charAt(i+1)))){
+                        outputField.setText("not valid arithmetic exp");
+                        return false;
+                    }
                 }
 
 
@@ -470,13 +481,20 @@ public class MainActivity extends AppCompatActivity {
 
             if (isBinaryOP(s.charAt(i))) {
                 // consecutive binary- binary operators, binary-unary allowed
-                if (isBinaryOP(s.charAt(i + 1))) {
+                if (isBinaryOP(s.charAt(i + 1)) ||(s.charAt(i+1)=='²')) {
                     outputField.setText("consecutive operators");
                     return false;
                 }
                 //divide by zero
                 if (s.charAt(i) == '/' && s.charAt(i + 1) == '0') {
                     outputField.setText("Divide by zero");
+                    return false;
+                }
+            }
+
+            if(s.charAt(i+1)=='√'){
+                if(!(isBinaryOP(s.charAt(i))|| s.charAt(i)=='√')){
+                    outputField.setText("not valid arithmetic exp");
                     return false;
                 }
             }
