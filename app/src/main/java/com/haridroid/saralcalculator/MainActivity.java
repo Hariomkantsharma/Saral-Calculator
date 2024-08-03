@@ -20,7 +20,7 @@ import java.util.Stack;
 public class MainActivity extends AppCompatActivity {
 
     Button btn0, btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9, btnAdd, btnSub, btnMul, btnDiv, btnLeft, btnRight, btnAC, btnDel, btnRoot, btnSquare;
-    TextView inputField, outputField;
+    TextView inputField, outputField, copyEq;
     boolean validOutput;
 
     @Override
@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
         btnSquare = findViewById(R.id.btnSquare);
         inputField = findViewById(R.id.inputSection);
         outputField = findViewById(R.id.resultSection);
+        copyEq = findViewById(R.id.copyEqBtn);
 
         btn0.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
         btnAC.setOnClickListener(v -> {
             inputField.setText("");
             updateOutputField();
@@ -101,6 +103,8 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
+
+        //paste exp from clipboard to inputField
         inputField.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -110,22 +114,38 @@ public class MainActivity extends AppCompatActivity {
                     ClipData.Item recent = allClipItems.getItemAt(0);
                     String inputExp = recent.getText().toString();
                     inputField.setText(inputExp);
+                    updateOutputField();
                 } else {
-                    Toast.makeText(MainActivity.this, "Clipboard is empty", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Clipboard is either empty or item is not valid arithmetic expression", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
+        //copy only output to clipboard
         outputField.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(validOutput){
+                if (validOutput) {
                     String outputValue = outputField.getText().toString();
                     ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                     ClipData newClip = ClipData.newPlainText("output", outputValue);
                     clipboard.setPrimaryClip(newClip);
-                    Toast.makeText(MainActivity.this, "Output copied to clipboard", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Output copied to clipboard!", Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+
+        //copy equation to clipboard if exp is valid
+        copyEq.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String inputValue = inputField.getText().toString();
+                String outputValue = outputField.getText().toString();
+                String finall = inputValue + " = " + outputValue;
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData newClip = ClipData.newPlainText("eqn", finall);
+                clipboard.setPrimaryClip(newClip);
+                Toast.makeText(MainActivity.this, "Equation copied to clipboard!", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -142,11 +162,10 @@ public class MainActivity extends AppCompatActivity {
         String exp = inputField.getText().toString();
 
         if (!validArithmeticExpCheck(exp)) {
-            validOutput= false;
+            validOutput = false;
             return;
-        }
-        else{
-            validOutput= true;
+        } else {
+            validOutput = true;
         }
         outputField.setText(Evaluate(infixToPostfix(exp)));
     }
